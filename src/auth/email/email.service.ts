@@ -77,4 +77,69 @@ export class EmailService {
             console.error(error)
         }
     }
+
+    async sendVerificationToken(token: string, email: string) {
+        try {
+            await this.resend.emails.send({
+                from: 'onboarding@resend.dev',
+                to: 'angelsfeliz@hotmail.com',
+                subject: 'Forgot Your Password?',
+                html: `
+                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2>Reset Your Password</h2>
+
+                    <p>
+                        We received a request to reset the password for your Panther Marketplace account.
+                    </p>
+
+                    <p>
+                        Click the button below to choose a new password:
+                    </p>
+
+                    <p style="margin: 30px 0;">
+                        <a
+                        href="{{RESET_URL}}"
+                        style="
+                            background-color: #4F46E5;
+                            color: white;
+                            padding: 12px 24px;
+                            text-decoration: none;
+                            border-radius: 6px;
+                            display: inline-block;
+                        "
+                        >
+                        Reset Password
+                        </a>
+                    </p>
+
+                    <p>
+                        This link will expire in 10 minutes.
+                    </p>
+
+                    <p>
+                        If you didn't request a password reset, you can safely ignore this email.
+                    </p>
+
+                    <hr />
+
+                    <p style="font-size: 12px; color: #666;">
+                        Student Marketplace Team
+                    </p>
+
+                    <p>
+                    If the button doesn't work, copy and paste this link into your browser:
+                    </p>
+
+                    <p>
+                    <a href="{{RESET_URL}}">
+                        {{RESET_URL}}
+                    </a>
+                    </p>
+                </div>
+                `,
+            });
+        } catch (error) {
+            console.error(error)
+        }
+    }
 }

@@ -36,6 +36,8 @@ model User {
   lastName                String
   profilePicture          String?
   bio                     String?
+  major                   String?
+  graduationYear          String?
 
   universityId            String
   university              University      @relation(fields: [universityId], references: [id])
@@ -56,6 +58,7 @@ model User {
   reports                 Report[]
 
   code                    EmailVerificationCode?
+  token                   ForgotPasswordToken?
 }
 
 model University {
@@ -85,6 +88,15 @@ model EmailDomain {
 model EmailVerificationCode {
   id              String          @id @default(cuid())
   code            String
+  userId          String          @unique
+  expiresAt       DateTime
+  
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ForgotPasswordToken {
+  id              String          @id @default(cuid())
+  token           String
   userId          String          @unique
   expiresAt       DateTime
   

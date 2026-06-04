@@ -2,7 +2,7 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { DomainService } from './domain.service';
 import { DomainDto } from './dto/domain.dto';
 
-@Controller('domain')
+@Controller('domains')
 export class DomainController {
     constructor( private domainServices: DomainService ) {}
 

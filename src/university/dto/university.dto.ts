@@ -5,3 +5,9 @@ export class UniversityDto {
     @IsNotEmpty()
     name: string
 }
+
+export class UpdateUniversityDto {
+    @IsString()
+    @IsNotEmpty()
+    name?: string
+}
