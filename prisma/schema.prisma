@@ -106,7 +106,7 @@ model ForgotPasswordToken {
 model Listing {
   id              String          @id @default(cuid())
   title           String
-  description     String
+  description     String?
   price           Decimal         @db.Decimal(10, 2)
   condition       ItemCondition
   status          ListingStatus   @default(ACTIVE)

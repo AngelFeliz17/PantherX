@@ -4,6 +4,7 @@ import { DomainController } from './domain.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
+  exports: [DomainService],
   imports: [PrismaModule],
   providers: [DomainService],
   controllers: [DomainController]

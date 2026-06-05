@@ -5,22 +5,22 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { JsonWebTokenError, JwtService, TokenExpiredError } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
-import { EmailService } from "./email/email.service";
+import { EmailService } from "../email/email.service";
 import * as crypto from "crypto";
 import { User } from "generated/prisma/browser";
+import { DomainService } from "src/domain/domain.service";
 
 @Injectable()
 
 export class AuthService{
-    constructor(private prisma: PrismaService, private jwt: JwtService, private config: ConfigService, private sendEmail: EmailService ) {}
+    constructor(private prisma: PrismaService, private jwt: JwtService, private config: ConfigService, private sendEmail: EmailService, private domain: DomainService ) {}
 
     async signUp(dto: SignUpDto) {
         const hash = await argon.hash(dto.password);
 
-        const domain = dto.email.split('@')[1].toLowerCase();
         try {
-            const uniDomain = await this.prisma.emailDomain.findUnique({ where: { domain } });
-            if(!uniDomain) {
+            const domain = await this.domain.validateEmail(dto.email);
+            if(!domain) {
                 throw new ForbiddenException("University domain not found");
             }
 
@@ -29,7 +29,7 @@ export class AuthService{
                     email: dto.email,
                     firstName: dto.firstName,
                     lastName: dto.lastName,
-                    universityId: uniDomain.universityId,
+                    universityId: domain.universityId,
                     password: hash
                 },
                 omit: { password: true }

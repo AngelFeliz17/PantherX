@@ -34,6 +34,12 @@ export class UserController {
         return this.userService.updateRole(id, dto);
     }
 
+    @UseGuards(AdminGuard)
+    @Delete(':id')
+    deleteUser(@Param('id') id: string) {
+        return this.userService.deleteUser(id);
+    }
+
     @Patch('me')
     update(@GetUser() user: User, @Body() dto: UpdateUserDto) {
         return this.userService.update(user, dto);

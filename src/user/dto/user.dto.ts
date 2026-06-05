@@ -1,9 +1,11 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { UserRole } from "generated/prisma/enums";
+import { Trim } from "src/decorator";
 
 export class UserDto {
     @IsNotEmpty()
     @IsEmail()
+    @Trim()
     email: string;
     
     @IsNotEmpty()
@@ -12,23 +14,28 @@ export class UserDto {
 
     @IsNotEmpty()
     @IsString()
+    @Trim()
     firstName: string;
 
     @IsNotEmpty()
     @IsString()
+    @Trim()
     lastName: string;
 
     @IsNotEmpty()
     @IsString()
-    bio: string
+    @Trim()
+    bio?: string
 
     @IsNotEmpty()
     @IsString()
-    profilePicture: string
+    @Trim()
+    profilePicture?: string
 
     @IsNotEmpty()
     @IsString()
-    graduationYear: string
+    @Trim()
+    graduationYear?: string
 }
 
 export class RoleDto {
@@ -39,18 +46,22 @@ export class RoleDto {
 export class UpdateUserDto {
     @IsOptional()
     @IsString()
+    @Trim()
     firstName?: string
     
     @IsOptional()
     @IsString()
+    @Trim()
     lastName?: string
     
     @IsOptional()
     @IsEmail()
+    @Trim()
     email?: string
 
     @IsOptional()
     @IsString()
+    @Trim()
     bio?: string
     
     @IsOptional()
@@ -59,5 +70,6 @@ export class UpdateUserDto {
 
     @IsOptional()
     @IsString()
+    @Trim()
     graduationYear?: string
 }

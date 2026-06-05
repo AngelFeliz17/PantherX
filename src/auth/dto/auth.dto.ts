@@ -1,8 +1,10 @@
 import { IsEmail, IsNotEmpty, IsString, MinLength } from "class-validator";
+import { Trim } from "src/decorator";
 
 export class SignUpDto {
   @IsNotEmpty()
   @IsEmail()
+  @Trim()
   email: string;
   
   @MinLength(8)
@@ -12,16 +14,19 @@ export class SignUpDto {
 
   @IsNotEmpty()
   @IsString()
+  @Trim()
   firstName: string;
 
   @IsNotEmpty()
   @IsString()
+  @Trim()
   lastName: string;
 }
 
 export class SignInDto {
   @IsNotEmpty()
   @IsEmail()
+  @Trim()
   email: string;
 
   @IsNotEmpty()
@@ -43,6 +48,7 @@ export class ChangePasswordDto {
 export class ForgotPasswordDto {
   @IsEmail()
   @IsNotEmpty()
+  @Trim()
   email: string
 }
 
@@ -59,12 +65,14 @@ export class ChangeForgottenPasswordDto {
 export class EmailDto {
   @IsNotEmpty()
   @IsEmail()
+  @Trim()
   email: string;
 }
 
 export class VerifyCodeDto {
   @IsNotEmpty()
   @IsEmail()
+  @Trim()
   email: string;
 
   @IsNotEmpty()
