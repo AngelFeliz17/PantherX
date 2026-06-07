@@ -19,4 +19,5 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         if(!user || user.deletedAt || !user.verified) throw new UnauthorizedException();
         return user;
     }
+    
 }

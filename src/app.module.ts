@@ -9,6 +9,7 @@ import { ListingModule } from './listing/listing.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { FavoritesModule } from './favorites/favorites.module';
 
 @Module({
   imports: [AuthModule, UserModule, PrismaModule, UniversityModule, DomainModule, CategoryModule, ListingModule, ThrottlerModule.forRoot([
@@ -16,7 +17,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
         ttl: 60000,
         limit: 5,
       },
-    ]), CloudinaryModule],
+    ]), CloudinaryModule, FavoritesModule],
     providers: [
       {
         provide: APP_GUARD,
