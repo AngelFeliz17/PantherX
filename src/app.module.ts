@@ -10,6 +10,8 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { FavoritesModule } from './favorites/favorites.module';
+import { MessageModule } from './message/message.module';
+import { ConversationModule } from './conversation/conversation.module';
 
 @Module({
   imports: [AuthModule, UserModule, PrismaModule, UniversityModule, DomainModule, CategoryModule, ListingModule, ThrottlerModule.forRoot([
@@ -17,7 +19,7 @@ import { FavoritesModule } from './favorites/favorites.module';
         ttl: 60000,
         limit: 5,
       },
-    ]), CloudinaryModule, FavoritesModule],
+    ]), CloudinaryModule, FavoritesModule, MessageModule, ConversationModule],
     providers: [
       {
         provide: APP_GUARD,
