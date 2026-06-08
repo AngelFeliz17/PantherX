@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import type { User } from 'generated/prisma/client';
 import { GetUser } from 'src/auth/decorator';
 import { MessageService } from './message.service';

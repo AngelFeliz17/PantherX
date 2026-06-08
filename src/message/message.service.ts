@@ -27,6 +27,10 @@ export class MessageService {
             conversationId
         } });
 
+        await this.prismaService.conversation.update({
+            where: { id: conversationId },
+            data: {}
+        })
         return message;
     }
 }

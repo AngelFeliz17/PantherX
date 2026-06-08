@@ -1,4 +1,4 @@
-import { Controller, Param, Post, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import type { User } from 'generated/prisma/client';
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
@@ -10,7 +10,12 @@ export class ConversationController {
     constructor(private conversationService: ConversationService) {}
 
     @Post(':listingId')
-    start(@GetUser() buyer: User, @Param('listingId') listingId: string) {
-        return this.conversationService.start(buyer, listingId);
+    start(@GetUser() user: User, @Param('listingId') listingId: string) {
+        return this.conversationService.start(user, listingId);
+    }
+
+    @Get()
+    findAll(@GetUser() user: User) {
+        return this.conversationService.findAll(user);
     }
 }
