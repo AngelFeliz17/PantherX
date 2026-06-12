@@ -44,8 +44,7 @@ async function main() {
     update: {},
     create: {
       email: process.env.ADMIN_EMAIL!,
-      firstName: process.env.ADMIN_FIRST_NAME!,
-      lastName: process.env.ADMIN_LAST_NAME!,
+      name: process.env.ADMIN_NAME!,
       password,
       verified: true,
       role: UserRole.ADMIN,
