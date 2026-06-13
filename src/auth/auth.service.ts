@@ -188,7 +188,7 @@ export class AuthService{
         }});
 
         await this.sendEmail.sendVerificationCode(user.email, user.name, codeDigits, expiresAt)
-        return { msg: "Code has been sent" }
+        return { email: user.email };
     }
 
     async verifyCode(dto: VerifyCodeDto) {
