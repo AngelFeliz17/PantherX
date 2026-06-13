@@ -1,6 +1,6 @@
 import { Body, Controller, Param, Post, Put, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
-import { ChangeForgottenPasswordDto, ChangePasswordDto, EmailDto, ForgotPasswordDto, SignInDto, SignUpDto, VerifyCodeDto } from "./dto";
+import { ChangeForgottenPasswordDto, ChangePasswordDto, EmailDto, ForgotPasswordDto, LogInDto, SignUpDto, VerifyCodeDto } from "./dto";
 import { GetUser } from "./decorator";
 import type { User } from "generated/prisma/client";
 import { JwtGuard } from "./guard";
@@ -14,9 +14,9 @@ export class AuthController{
         return this.authService.signUp(dto);
     }
 
-    @Post('signin')
-    signIn(@Body() dto: SignInDto){
-        return this.authService.signIn(dto);
+    @Post('login')
+    logIn(@Body() dto: LogInDto){
+        return this.authService.logIn(dto);
     }
 
     @Post('generate-code')

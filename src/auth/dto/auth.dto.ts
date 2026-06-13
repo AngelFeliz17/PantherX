@@ -5,72 +5,72 @@ export class SignUpDto {
   @IsNotEmpty()
   @IsEmail()
   @Trim()
-  email: string;
+  email!: string;
   
   @MinLength(8)
   @IsNotEmpty()
   @IsString()
-  password: string;
+  password!: string;
 
   @IsNotEmpty()
   @IsString()
   @Trim()
-  name: string;
+  name!: string;
 }
 
-export class SignInDto {
+export class LogInDto {
   @IsNotEmpty()
   @IsEmail()
   @Trim()
-  email: string;
+  email!: string;
 
   @IsNotEmpty()
-  @IsString() 
-  password: string;
+  @IsString()
+  password!: string;
 }
 
 export class ChangePasswordDto {
     @IsNotEmpty()
-    @IsString()
-    currentPassword: string
+  @IsString()
+  currentPassword!: string;
 
     @MinLength(8)
-    @IsNotEmpty()
-    @IsString()
-    newPassword: string
+  @IsNotEmpty()
+  @IsString()
+  newPassword!: string;
 }
 
 export class ForgotPasswordDto {
   @IsEmail()
   @IsNotEmpty()
   @Trim()
-  email: string
+  email!: string;
 }
 
 export class ChangeForgottenPasswordDto {
   @IsNotEmpty()
   @IsString()
-  newPassword: string
+  newPassword!: string;
 
   @IsNotEmpty()
   @IsString()
-  newPasswordConfirmation: string
+  newPasswordConfirmation!: string;
 }
 
 export class EmailDto {
   @IsNotEmpty()
   @IsEmail()
   @Trim()
-  email: string;
+  email!: string;
 }
 
 export class VerifyCodeDto {
   @IsNotEmpty()
   @IsEmail()
   @Trim()
-  email: string;
+  email!: string;
 
   @IsNotEmpty()
   @IsString()
-  code: string;
+  code!: string;
 }

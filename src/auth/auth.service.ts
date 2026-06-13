@@ -1,5 +1,5 @@
 import  { BadRequestException, ConflictException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from "@nestjs/common" 
-import { ChangeForgottenPasswordDto, ChangePasswordDto, EmailDto, ForgotPasswordDto, SignInDto, SignUpDto, VerifyCodeDto} from "./dto"
+import { ChangeForgottenPasswordDto, ChangePasswordDto, EmailDto, ForgotPasswordDto, LogInDto, SignUpDto, VerifyCodeDto } from "./dto"
 import * as argon from "argon2"
 import { PrismaService } from "src/prisma/prisma.service";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
@@ -21,9 +21,8 @@ export class AuthService{
 
         try {
             const domain = await this.domain.validateEmail(dto.email);
-            if(!domain) {
-                throw new ForbiddenException("University domain not found");
-            }
+            if(!domain) throw new ForbiddenException("University domain not found");
+
             const existingUser = await this.prisma.user.findFirst({ where: { email: dto.email } });
             if(existingUser?.deletedAt) throw new UnauthorizedException('Account has been deleted. Sign in to restore');
             if(existingUser?.suspended) throw new UnauthorizedException("Account is suspended. Check your email for more information");
@@ -55,7 +54,7 @@ export class AuthService{
         }
     }
 
-    async signIn(dto: SignInDto) {
+    async logIn(dto: LogInDto) {
         const user = await this.prisma.user.findUnique({ where: {
             email: dto.email
         }});
