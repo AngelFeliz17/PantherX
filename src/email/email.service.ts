@@ -69,7 +69,7 @@ export class EmailService {
 
                     <p>
                     Best regards,<br>
-                    Panther Marketplace Team
+                    PantherX Team 💜💛
                     </p>
             `,
             });
@@ -78,7 +78,7 @@ export class EmailService {
         }
     }
 
-    async sendVerificationToken(token: string, email: string) {
+    async sendForgotPasswordEmail(token: string, email: string) {
         try {
             await this.resend.emails.send({
                 from: 'onboarding@resend.dev',
@@ -98,7 +98,7 @@ export class EmailService {
 
                     <p style="margin: 30px 0;">
                         <a
-                        href="{{RESET_URL}}"
+                        href="${this.config.get('RESET_PASSWORD_URL')}/${token}"
                         style="
                             background-color: #4F46E5;
                             color: white;
@@ -123,7 +123,7 @@ export class EmailService {
                     <hr />
 
                     <p style="font-size: 12px; color: #666;">
-                        Student Marketplace Team
+                        PantherX Team 💜💛
                     </p>
 
                     <p>
@@ -131,8 +131,8 @@ export class EmailService {
                     </p>
 
                     <p>
-                    <a href="{{RESET_URL}}">
-                        {{RESET_URL}}
+                    <a href="${this.config.get('RESET_PASSWORD_URL')}/${token}">
+                        ${this.config.get('RESET_PASSWORD_URL')}/${token}
                     </a>
                     </p>
                 </div>
@@ -172,7 +172,7 @@ export class EmailService {
                         <hr />
 
                         <p style="font-size: 12px; color: #666;">
-                            Panther Marketplace Team 💜💛
+                            PantherX Team 💜💛
                         </p>
                     </div>
                 `
@@ -228,7 +228,7 @@ export class EmailService {
                     <hr />
 
                     <p style="font-size: 12px; color: #666;">
-                        Panther Marketplace Team 💜💛
+                        PantherX Team 💜💛
                     </p>
 
                     <p>
@@ -273,7 +273,7 @@ export class EmailService {
                         <hr />
 
                         <p style="font-size: 12px; color: #666;">
-                            Panther Marketplace Team 💜💛
+                            PantherX Team 💜💛
                         </p>
                     </div>
                 `

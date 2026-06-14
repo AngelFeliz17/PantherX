@@ -37,11 +37,11 @@ export class AuthController{
     }
 
     @Post('forgot-password')
-    forgotPassword(@Body() dto: ForgotPasswordDto) {
-        return this.authService.forgotPassword(dto);
+    sendForgotPasswordEmail(@Body() dto: ForgotPasswordDto) {
+        return this.authService.sendForgotPasswordEmail(dto);
     }
 
-    @Put('change-forgotten-password/:token')
+    @Put('reset-password/:token')
     changeForgottenPassword(@Body() dto: ChangeForgottenPasswordDto, @Param('token') token: string) {
         return this.authService.changeForgottenPassword(token, dto);
     }

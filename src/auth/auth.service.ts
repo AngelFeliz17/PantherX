@@ -85,17 +85,17 @@ export class AuthService{
         try {
             const hash = await argon.hash(dto.newPassword);
             await this.prisma.user.update({ where: { id: user.id }, data: { password: hash}})
-            return { msg: "Password changed successfully"}
+            return { message: "Password changed successfully"}
         } catch (error) {
             console.error(error)
             throw new InternalServerErrorException("Failed to update password");
         }
     }
 
-    async forgotPassword(dto: ForgotPasswordDto) {
+    async sendForgotPasswordEmail(dto: ForgotPasswordDto) {
         const user = await this.prisma.user.findUnique({ where: { email: dto.email }, include: { token: true } });
         if(!user) { 
-            return { msg: "If an account exists, a reset link has been sent" }
+            return { message: "If an account exists, a reset link has been sent" }
         };
         if(user.token) {
             await this.prisma.forgotPasswordToken.delete({ where: { id: user.token.id } })
@@ -110,11 +110,11 @@ export class AuthService{
         }});
 
         try {
-            await this.sendEmail.sendVerificationToken(token, user.email);
+            await this.sendEmail.sendForgotPasswordEmail(token, user.email);
         } catch (error) {
             await this.prisma.forgotPasswordToken.delete({ where: { id: savedToken.id } });
         }
-        return { msg: "If an account exists, a reset link has been sent" };
+        return { message: "If an account exists, a reset link has been sent to your email" };
     }
 
     async changeForgottenPassword(token: string, dto: ChangeForgottenPasswordDto) {
@@ -134,7 +134,7 @@ export class AuthService{
             } });
 
             await this.prisma.forgotPasswordToken.delete({ where: { userId: payload.sub } });
-            return { msg: "Password changed successfully" }
+            return { message: "Password changed successfully" }
         } catch (error) {
             if(error instanceof JsonWebTokenError || error instanceof TokenExpiredError) {
                 throw new ForbiddenException("Invalid or expired token");
@@ -216,6 +216,6 @@ export class AuthService{
         await this.sendEmail.sendWelcomingEmail(user.email, user.name);
         const access_token = await this.signToken(user.id, user.email);
 
-        return { msg: "Account verified successfully", ...access_token };
+        return { message: "Account verified successfully", ...access_token };
     }
 } 
