@@ -163,7 +163,7 @@ export class AuthService{
         const secret = this.config.get("JWT_SECRET");
 
         const access_token = await this.jwt.signAsync(payload, { expiresIn: "7d", secret});
-        return { access_token: access_token };
+        return { access_token };
     }
 
     async generateCode(dto: EmailDto) {
