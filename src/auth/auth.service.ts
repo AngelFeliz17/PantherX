@@ -60,8 +60,8 @@ export class AuthService{
         }});
 
         if(!user) throw new ForbiddenException("Invalid credentials");
-        if(!user.verified) throw new UnauthorizedException("You haven't verified your account, try again.");
-        if(user.suspended) throw new UnauthorizedException("Account is suspended. Check your email for more information");
+        if(!user.verified) throw new UnauthorizedException({ message: "You haven't verified your account", code: "UNVERIFIED" });
+        if(user.suspended) throw new UnauthorizedException({ message: "Account is suspended. Check your email for more information", code: "SUSPENDED" });
         
         const verifyPass = await argon.verify(user.password, dto.password);
         if(!verifyPass) throw new ForbiddenException("Invalid credentials");
