@@ -10,9 +10,9 @@ import * as crypto from "crypto";
 import { User } from "generated/prisma/browser";
 import { DomainService } from "src/domain/domain.service";
 import { UserService } from "src/user/user.service";
-
+import { Response } from "express";
+import { COOKIE_OPTIONS } from "../reusable/"
 @Injectable()
-
 export class AuthService{
     constructor(private prisma: PrismaService, private jwt: JwtService, private config: ConfigService, private sendEmail: EmailService, private domain: DomainService, private userService: UserService ) {}
 
@@ -21,6 +21,7 @@ export class AuthService{
 
         try {
             const domain = await this.domain.validateEmail(dto.email);
+
             if(!domain) throw new ForbiddenException("University domain not found");
 
             const existingUser = await this.prisma.user.findFirst({ where: { email: dto.email } });
@@ -54,7 +55,7 @@ export class AuthService{
         }
     }
 
-    async logIn(dto: LogInDto) {
+    async logIn(dto: LogInDto, res: Response) {
         const user = await this.prisma.user.findUnique({ where: {
             email: dto.email
         }});
@@ -69,7 +70,11 @@ export class AuthService{
             await this.userService.restore(user.id);   
         }
         
-        return this.signToken(user.id, user.email);
+        const { access_token } = await this.signToken(user.id, user.email);
+
+        res.cookie("access_token", access_token, COOKIE_OPTIONS);
+
+        return { message: "Logged in successfully" }
     }
 
     async changePassword(loggedUser: User, dto: ChangePasswordDto) {
@@ -190,7 +195,7 @@ export class AuthService{
         return { email: user.email };
     }
 
-    async verifyCode(dto: VerifyCodeDto) {
+    async verifyCode(dto: VerifyCodeDto, res: Response) {
         const user = await this.prisma.user.findUnique({ where: { email: dto.email }, include: { code: true } });
 
         if(!user) throw new NotFoundException("Email not found");
@@ -214,8 +219,9 @@ export class AuthService{
 
         await this.prisma.emailVerificationCode.delete({ where: { id: user.code.id }});
         await this.sendEmail.sendWelcomingEmail(user.email, user.name);
-        const access_token = await this.signToken(user.id, user.email);
-
-        return { message: "Account verified successfully", ...access_token };
+        const { access_token } = await this.signToken(user.id, user.email);
+        res.cookie("access_token", access_token, COOKIE_OPTIONS);
+        
+        return { message: "Account verified successfully" };
     }
 } 

@@ -6,21 +6,16 @@ export class UserDto {
     @IsNotEmpty()
     @IsEmail()
     @Trim()
-    email: string;
+    email!: string;
     
     @IsNotEmpty()
     @IsString()
-    password: string;
+    password!: string;
 
     @IsNotEmpty()
     @IsString()
     @Trim()
-    firstName: string;
-
-    @IsNotEmpty()
-    @IsString()
-    @Trim()
-    lastName: string;
+    name!: string
 
     @IsNotEmpty()
     @IsString()
@@ -40,19 +35,14 @@ export class UserDto {
 
 export class RoleDto {
     @IsEnum(UserRole)
-    role: UserRole
+    role!: UserRole;
 }
 
 export class UpdateUserDto {
     @IsOptional()
     @IsString()
     @Trim()
-    firstName?: string
-    
-    @IsOptional()
-    @IsString()
-    @Trim()
-    lastName?: string
+    name?: string
     
     @IsOptional()
     @IsEmail()

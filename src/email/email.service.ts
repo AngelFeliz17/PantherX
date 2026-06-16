@@ -6,7 +6,6 @@ import { Resend } from "resend";
 export class EmailService {
     private readonly resend: Resend;
     constructor(private config: ConfigService) {
-        console.log(this.config.get('RESEND_API_KEY'));
         this.resend = new Resend(this.config.get("RESEND_API_KEY"));
     }
 
