@@ -19,7 +19,7 @@ import { FilterModule } from './filter/filter.module';
   imports: [AuthModule, UserModule, PrismaModule, UniversityModule, DomainModule, CategoryModule, ListingModule, ThrottlerModule.forRoot([
       {
         ttl: 60000,
-        limit: 10,
+        limit: 500,
       },
     ]), CloudinaryModule, FavoritesModule, MessageModule, ConversationModule, ReportModule, FilterModule],
     providers: [
