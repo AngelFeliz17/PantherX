@@ -56,10 +56,6 @@ export class UpdateUserDto {
     
     @IsOptional()
     @IsString()
-    profilePicture?: string
-
-    @IsOptional()
-    @IsString()
     @Trim()
     graduationYear?: string
 }

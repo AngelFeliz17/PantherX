@@ -1,12 +1,14 @@
-import { ConflictException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { User } from 'generated/prisma/browser';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RoleDto, UpdateUserDto } from './dto';
 import { EmailService } from 'src/email/email.service';
+import { CloudinaryService } from '@/cloudinary/cloudinary.service';
+import { CloudinaryUploadResult } from '@/cloudinary/interface';
  
 @Injectable()
 export class UserService {
-    constructor(private prisma: PrismaService, private emailService: EmailService ) {}
+    constructor(private prisma: PrismaService, private emailService: EmailService, private cloudinaryService: CloudinaryService ) {}
 
     async findAll() {
         const users = await this.prisma.user.findMany({ omit: { password: true } });
@@ -35,7 +37,38 @@ export class UserService {
             if(existingUser) throw new ConflictException("Email already in use");
         }
         
-        return await this.prisma.user.update({ where: { id: user.id}, data: dto, omit: { password: true } });
+        const userData = await this.prisma.user.update({ where: { id: user.id}, data: dto, omit: { password: true } });
+        return { userData, message: "User updated successfully" }
+    }
+
+    async updateProfilePicture(user: User, file: Express.Multer.File) {
+        const existingAvatar = await this.prisma.profilePicture.findUnique({ where: { userId: user.id } });
+        if(existingAvatar) {
+            await this.cloudinaryService.deleteImage(existingAvatar.publicId);
+        }
+        if(!file) throw new BadRequestException("An image has to be uploaded");
+
+        const { secure_url, public_id } = await this.cloudinaryService.uploadProfilePicture(file) as CloudinaryUploadResult;
+
+        await this.prisma.profilePicture.upsert({ where: { userId: user.id }, update: { url: secure_url, publicId: public_id,
+        }, create: { userId: user.id, url: secure_url, publicId: public_id } });
+    }
+    
+    async updateProfileBanner(user: User, file: Express.Multer.File) {
+        console.log(file)
+        const existingBanner = await this.prisma.profileBanner.findUnique({ where: { userId: user.id } });
+        if(existingBanner) {
+            await this.cloudinaryService.deleteImage(existingBanner.publicId);
+        }
+        if(!file) throw new BadRequestException("An image has to be uploaded");
+
+        try {
+            const { secure_url, public_id } = await this.cloudinaryService.uploadProfileBanner(file) as CloudinaryUploadResult;
+            await this.prisma.profileBanner.upsert({ where: { userId: user.id }, update: { url: secure_url, publicId: public_id,
+        }, create: { userId: user.id, url: secure_url, publicId: public_id } });
+        } catch (error) {
+          console.log(error)  
+        }
     }
 
     private async deleteUserListing (id: string) {
@@ -58,7 +91,7 @@ export class UserService {
             await this.deleteUserListing(user.id);
             await this.emailService.sendOnDeleteAccountEmail(user.email);
 
-            return { msg: "User deleted successfully" };
+            return { message: "User deleted successfully" };
         } catch (error) {
             console.error(error)
             throw new InternalServerErrorException('Failed to delete user');
@@ -69,7 +102,7 @@ export class UserService {
         try {
             await this.deleteUserListing(id)
 
-            return { msg: "User deleted successfully" };
+            return { message: "User deleted successfully" };
         } catch (error) {
             console.error(error)
             throw new InternalServerErrorException('Failed to delete user');

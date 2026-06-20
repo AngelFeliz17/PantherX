@@ -9,11 +9,13 @@ import { DomainService } from "src/domain/domain.service";
 import { DomainModule } from "src/domain/domain.module";
 import { UserModule } from "src/user/user.module";
 import { UserService } from "src/user/user.service";
+import { CloudinaryModule } from "@/cloudinary/cloudinary.module";
+import { CloudinaryService } from "@/cloudinary/cloudinary.service";
 
 @Module({
-    imports: [ JwtModule.register({}), EmailModule, DomainModule, UserModule ],
+    imports: [ JwtModule.register({}), EmailModule, DomainModule, UserModule, CloudinaryModule ],
     controllers: [ AuthController ],
-    providers: [ AuthService, JwtStrategy, EmailService, DomainService, UserService ]
+    providers: [ AuthService, JwtStrategy, EmailService, DomainService, UserService, CloudinaryService ]
 })
 
 export class AuthModule{}

@@ -1,10 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import type { User } from 'generated/prisma/client';
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
 import { UserService } from './user.service';
 import { RoleDto, UpdateUserDto } from './dto/user.dto';
 import { AdminGuard } from './guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @UseGuards(JwtGuard)
 @Controller('users')
@@ -53,5 +54,19 @@ export class UserController {
     @Patch(':id/restore')
     restore(@Param('id') id: string) {
         return this.userService.restore(id);
+    }
+
+    @UseGuards(JwtGuard)
+    @Post('update-profile-picture')
+    @UseInterceptors(FileInterceptor('file'))
+    async updateProfilePicture(@GetUser() user: User, @UploadedFile() file: Express.Multer.File) {
+        return this.userService.updateProfilePicture(user, file);
+    }
+
+    @UseGuards(JwtGuard)
+    @Post('update-profile-banner')
+    @UseInterceptors(FileInterceptor('file'))
+    async updateProfileBanner(@GetUser() user: User, @UploadedFile() file: Express.Multer.File) {
+        return this.userService.updateProfileBanner(user, file);
     }
 }

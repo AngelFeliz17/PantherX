@@ -19,6 +19,20 @@ export class CloudinaryService {
         }).end(file.buffer))
     }
 
+    async uploadProfilePicture(file: Express.Multer.File) {
+        return new Promise((resolve, reject) => cloudinary.uploader.upload_stream( { folder: "student marketplace/avatars" }, (error, result) => {
+                if(error) return reject(error);
+                resolve(result);
+        }).end(file.buffer))
+    }
+
+    async uploadProfileBanner(file: Express.Multer.File) {
+        return new Promise((resolve, reject) => cloudinary.uploader.upload_stream( { folder: "student marketplace/banners" }, (error, result) => {
+                if(error) return reject(error);
+                resolve(result);
+        }).end(file.buffer))
+    }
+
     async deleteImage(publicId: string) {
         return cloudinary.uploader.destroy(publicId);
     }
