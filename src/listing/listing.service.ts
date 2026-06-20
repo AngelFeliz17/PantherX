@@ -42,7 +42,7 @@ export class ListingService {
     }
 
     async findAll() {
-        return await this.prisma.listing.findMany({ where: { deletedAt: null } });
+        return await this.prisma.listing.findMany({ where: { deletedAt: null, seller: { deletedAt: null, suspended: false } }, include: { images: { orderBy: { order: 'asc' } }, seller: { select: { id: true, name: true, profilePicture: true } }} });
     }
 
     async find(id: string) {
