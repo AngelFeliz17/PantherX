@@ -33,7 +33,6 @@ export class UserController {
         return this.userService.findAll()
     }
 
-    @UseGuards(AdminGuard)
     @Get(':id')
     find(@Param('id') id: string) {
         return this.userService.find(id);
@@ -56,14 +55,12 @@ export class UserController {
         return this.userService.restore(id);
     }
 
-    @UseGuards(JwtGuard)
     @Post('update-profile-picture')
     @UseInterceptors(FileInterceptor('file'))
     async updateProfilePicture(@GetUser() user: User, @UploadedFile() file: Express.Multer.File) {
         return this.userService.updateProfilePicture(user, file);
     }
 
-    @UseGuards(JwtGuard)
     @Post('update-profile-banner')
     @UseInterceptors(FileInterceptor('file'))
     async updateProfileBanner(@GetUser() user: User, @UploadedFile() file: Express.Multer.File) {
