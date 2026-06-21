@@ -1,4 +1,5 @@
-import { IsOptional, IsString, IsNumberString } from "class-validator";
+import { Type } from "class-transformer";
+import { IsOptional, IsString, IsNumberString, IsNumber } from "class-validator";
 import { Trim } from "src/decorator";
 
 export class FilterDto {
@@ -13,12 +14,14 @@ export class FilterDto {
     condition?: string;
 
     @IsOptional()
-    @IsNumberString()
     @Trim()
+    @Type(() => Number)
+    @IsNumber()
     minPrice?: string;
 
     @IsOptional()
-    @IsNumberString()
+    @Type(() => Number)
+    @IsNumber()
     @Trim()
     maxPrice?: string;
 

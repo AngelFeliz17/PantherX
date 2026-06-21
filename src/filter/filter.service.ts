@@ -9,6 +9,10 @@ import { FilterDto } from './dto';
             async filter(filters: FilterDto) {
                 const where: any = {
                     deletedAt: null,
+                    seller: {
+                        deletedAt: null,
+                        suspended: false
+                    }
                 };
 
                 if (filters.categoryId && filters.categoryId.trim() !== '') {
@@ -51,6 +55,10 @@ import { FilterDto } from './dto';
                     orderBy: {
                     createdAt: 'desc',
                     },
+                    include: {
+                        seller: { omit: { password: true }},
+                        images: true
+                    }
                 });
         }
 }
