@@ -22,15 +22,17 @@ export class ListingService {
                 uploadedImages.push(result)
             };
 
-            return await this.prisma.listing.create({ data: { ...dto,  sellerId: seller.id, images: { create: uploadedImages.map((img, idx) => ({
+            const data = await this.prisma.listing.create({ data: { ...dto,  sellerId: seller.id, images: { create: uploadedImages.map((img, idx) => ({
                 url: img.secure_url,
                 order: idx,
                 publicId: img.public_id
-            })) } }, include: { category: true, images: { orderBy: { order: 'asc' } }, seller: { omit: { password: true } } } } );
+            })) } } } );
+            return { message: "Listing created successfully", data }
        } catch(error) {
             await Promise.all(
                 uploadedImages.map(img => this.cloudinaryService.deleteImage(img.public_id))
             )
+            console.log(error)
             throw error;
        }
     }

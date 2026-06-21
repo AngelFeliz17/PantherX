@@ -32,6 +32,7 @@ export class ListingDto {
   @IsString()
   @IsNotEmpty()
   categoryId!: string
+
 }
 
 export class UpdateListingDto {
