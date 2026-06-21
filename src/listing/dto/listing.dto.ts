@@ -8,7 +8,7 @@ export class ListingDto {
   @Trim()
   @IsNotEmpty()
   @MaxLength(100)
-  title: string
+  title!: string
 
   @IsString()
   @Trim()
@@ -18,11 +18,11 @@ export class ListingDto {
   @Min(0)
   @IsNumber()
   @Type(() => Number)
-  price: number
+  price!: number
 
   @IsEnum(ItemCondition)
   @IsNotEmpty()
-  condition: ItemCondition
+  condition!: ItemCondition
 
   @IsString()
   @Trim()
@@ -31,7 +31,7 @@ export class ListingDto {
 
   @IsString()
   @IsNotEmpty()
-  categoryId: string
+  categoryId!: string
 }
 
 export class UpdateListingDto {
@@ -39,7 +39,7 @@ export class UpdateListingDto {
   @Trim()
   @IsOptional()
   @MaxLength(100)
-  title: string
+  title!: string
 
   @IsString()
   @Trim()
@@ -50,11 +50,11 @@ export class UpdateListingDto {
   @IsNumber()
   @IsOptional()
   @Type(() => Number)
-  price: number
+  price!: number
 
   @IsEnum(ItemCondition)
   @IsOptional()
-  condition: ItemCondition
+  condition!: ItemCondition
 
   @IsString()
   @Trim()
@@ -63,9 +63,9 @@ export class UpdateListingDto {
 
   @IsEnum(ListingStatus)
   @IsOptional()
-  status: ListingStatus
+  status!: ListingStatus
 
   @IsString()
   @IsOptional()
-  categoryId: string
+  categoryId!: string
 }
