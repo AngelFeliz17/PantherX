@@ -44,11 +44,11 @@ export class ListingService {
     }
 
     async findAll() {
-        return await this.prisma.listing.findMany({ where: { deletedAt: null, seller: { deletedAt: null, suspended: false } }, include: { images: { orderBy: { order: 'asc' } }, seller: { select: { id: true, name: true, profilePicture: true } }} });
+        return await this.prisma.listing.findMany({ where: { deletedAt: null, seller: { deletedAt: null, suspended: false } }, include: { images: { orderBy: { order: 'asc' } }, seller: { select: { id: true, name: true } } } });
     }
 
     async find(id: string) {
-        const listing = await this.prisma.listing.findFirst({ where: { id, deletedAt: null }, include: { seller: { omit: { password: true } }, category: true, images: true } });
+        const listing = await this.prisma.listing.findFirst({ where: { id, deletedAt: null }, include: { seller: { omit: { password: true }, include: { profilePicture: true } }, category: true, images: true } });
         if(!listing) throw new NotFoundException("Listing not found");
 
         return listing;

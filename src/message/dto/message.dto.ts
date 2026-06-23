@@ -5,5 +5,5 @@ export class MessageDto {
     @IsString()
     @IsNotEmpty()
     @Trim()
-    content: string
+    content!: string
 }
