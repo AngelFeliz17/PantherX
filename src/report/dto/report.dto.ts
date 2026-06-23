@@ -5,5 +5,5 @@ export class ReportDto {
     @IsString()
     @IsNotEmpty()
     @Trim()
-    reason: string;
+    reason!: string;
 }

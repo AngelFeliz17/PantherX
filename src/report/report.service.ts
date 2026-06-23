@@ -21,7 +21,7 @@ export class ReportService {
         if(!listing) throw new NotFoundException("Listing not found");
 
         await this.prismaService.report.create({ data: { reason: dto.reason, reporterId: user.id, listingId } });
-        return { message: "Report created successfully" }
+        return { message: "Listing reported successfully, we'll notify you once we have made a decision", status: 200 }
     }
 
     async findByAdmin() {
