@@ -21,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
             include: { images: true, seller: { 
                 omit: { password: true }
              } }
-        }, university: true, favorites: true, profilePicture: true, banner: true }});
+        }, university: true, profilePicture: true, banner: true }});
 
         if(!user || user.deletedAt || !user.verified) throw new UnauthorizedException();
         return user;

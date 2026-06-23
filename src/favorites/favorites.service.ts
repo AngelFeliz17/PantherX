@@ -8,7 +8,7 @@ export class FavoritesService {
 
     async add(user: User, listingId: string) {
         const listing = await this.prismaService.listing.findFirst({ where: { id: listingId, deletedAt: null, sellerId: { not: user.id } } });
-
+        console.log(listing)
         if(!listing) throw new BadRequestException('Listing not found');
 
         const existingFavorite = await this.prismaService.favorite.findUnique({
@@ -33,7 +33,7 @@ export class FavoritesService {
     }
 
     async delete(user: User, listingId: string) {
-        const listing = await this.prismaService.listing.findUnique({ where: { id: listingId, deletedAt: null, sellerId: { not: user.id } } });
+        const listing = await this.prismaService.listing.findFirst({ where: { id: listingId, deletedAt: null, sellerId: { not: user.id } } });
 
         if(!listing) throw new BadRequestException('Listing not found');
 
@@ -46,10 +46,8 @@ export class FavoritesService {
     }
 
     async find(user: User) {
-        const favorites = await this.prismaService.favorite.findMany({ where: { userId: user.id, listing: { deletedAt: null } }, include: { listing: true } });
+        const favorites = await this.prismaService.favorite.findMany({ where: { userId: user.id, listing: { deletedAt: null } }, include: { listing: { include: { seller: { omit: { password: true } }, images: true } } } });
 
-        return favorites;
+        return { favorites };
     }
-
-
 }
