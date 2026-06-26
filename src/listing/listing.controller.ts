@@ -7,11 +7,11 @@ import type { User } from 'generated/prisma/client';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { AdminGuard } from 'src/user/guard';
 
-@UseGuards(JwtGuard)
 @Controller('listings')
 export class ListingController {
     constructor(private listingService: ListingService) {}
 
+    @UseGuards(JwtGuard)
     @Post()
     @UseInterceptors(FilesInterceptor('images', 10))
     create(@Body() dto: ListingDto, @GetUser() seller: User, @UploadedFiles() files: Express.Multer.File[]) {
@@ -28,27 +28,32 @@ export class ListingController {
         return this.listingService.find(id);
     }
 
+    @UseGuards(JwtGuard)
     @Get('my')
     findMy(@GetUser() user: User) {
         return this.listingService.findMy(user);
     }
 
+    @UseGuards(JwtGuard)
     @Patch(':id')
     update(@Param('id') id: string, @Body() dto: UpdateListingDto) {
         return this.listingService.update(id, dto);
     }
 
+    @UseGuards(JwtGuard)
     @Delete(':id')
     delete(@Param('id') id: string) {
         return this.listingService.delete(id);
     }
 
+    @UseGuards(JwtGuard)
     @Delete('image/:id')
     removeImage(@Param('id') id: string) {
         return this.listingService.removeImage(id);
     }
 
     @UseGuards(AdminGuard)
+    @UseGuards(JwtGuard)
     @Delete('permanently/:id')
     permanentlyDelete(@Param('id') id: string) {
         return this.listingService.permanentlyDelete(id);
