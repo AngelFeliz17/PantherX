@@ -7,7 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
   app.enableCors({
-    origin: [process.env.FRONTEND_URL, "http://192.168.6.134:3000"],
+    origin: [process.env.FRONTEND_URL, process.env.ADMIN_URL, process.env.PHONE_URL],
     credentials: true
   })
   app.use(cookieParser());
