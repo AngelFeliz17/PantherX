@@ -61,22 +61,63 @@ export class ListingService {
     }
 
     async update(id: string, dto: UpdateListingDto, files: Express.Multer.File[]) {
-        const listing = await this.prisma.listing.findFirst({ where: { id, deletedAt: null } });
+        const listing = await this.prisma.listing.findFirst({ where: { id, deletedAt: null }, include: { images: true } });
         if(!listing) throw new NotFoundException("Listing not found")
-        let images;
+
+        const { existingImageIds, ...rest } = dto;
+        const keptIds = existingImageIds ?? listing.images.map(img => img.id);
+        const keptIdSet = new Set(keptIds);
+        const imagesToDelete = listing.images.filter(img => !keptIdSet.has(img.id));
+
+        const uploadedFiles = files ?? [];
+        if (keptIds.length + uploadedFiles.length === 0) {
+            throw new BadRequestException("A listing must have at least one image");
+        }
+
+        let uploaded: CloudinaryUploadResult[] = [];
         try {
-            if(files) {
-                images = await this.uploadImages(files);
+            if (uploadedFiles.length) {
+                uploaded = await this.uploadImages(uploadedFiles);
             }
-            return await this.prisma.listing.update({ where: { id }, data: { ...dto, images: { create: images.map((img, idx) => ({
-                url: img.secure_url,
-                order: idx,
-                publicId: img.public_id
-            })) } } });
+
+            await this.prisma.$transaction(async (tx) => {
+                // Shift existing orders out of the way first so reassigning them
+                // below can't collide with the @@unique([listingId, order]) constraint.
+                await tx.listingImage.updateMany({
+                    where: { listingId: id },
+                    data: { order: { increment: keptIds.length + uploaded.length } },
+                });
+
+                for (const [idx, imageId] of keptIds.entries()) {
+                    await tx.listingImage.update({ where: { id: imageId }, data: { order: idx } });
+                }
+
+                if (imagesToDelete.length) {
+                    await tx.listingImage.deleteMany({ where: { id: { in: imagesToDelete.map(img => img.id) } } });
+                }
+
+                if (uploaded.length) {
+                    await tx.listingImage.createMany({
+                        data: uploaded.map((img, idx) => ({
+                            listingId: id,
+                            url: img.secure_url,
+                            order: keptIds.length + idx,
+                            publicId: img.public_id,
+                        })),
+                    });
+                }
+
+                await tx.listing.update({ where: { id }, data: rest });
+            });
         } catch(error) {
+            await Promise.all(uploaded.map(img => this.cloudinaryService.deleteImage(img.public_id)));
             console.error(error);
             throw error;
         }
+
+        await Promise.all(imagesToDelete.map(img => this.cloudinaryService.deleteImage(img.publicId)));
+
+        return this.find(id);
     }
 
     async removeImage(id: string) {

@@ -1,5 +1,5 @@
-import { Type } from "class-transformer"
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength, Min } from "class-validator"
+import { Transform, Type } from "class-transformer"
+import { IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength, Min } from "class-validator"
 import { ItemCondition, ListingStatus } from "generated/prisma/enums"
 import { Trim } from "src/decorator"
 
@@ -69,4 +69,10 @@ export class UpdateListingDto {
   @IsString()
   @IsOptional()
   categoryId!: string
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  @Transform(({ value }) => (typeof value === "string" ? JSON.parse(value) : value))
+  existingImageIds?: string[]
 }
