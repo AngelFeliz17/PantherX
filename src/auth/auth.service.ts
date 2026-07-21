@@ -1,6 +1,6 @@
-import  { BadRequestException, ConflictException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from "@nestjs/common" 
-import { ChangeForgottenPasswordDto, ChangePasswordDto, EmailDto, ForgotPasswordDto, LogInDto, SignUpDto, VerifyCodeDto } from "./dto"
-import * as argon from "argon2"
+import  { BadRequestException, ConflictException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from "@nestjs/common"; 
+import { ChangeForgottenPasswordDto, ChangePasswordDto, EmailDto, ForgotPasswordDto, LogInDto, SignUpDto, VerifyCodeDto } from "./dto";
+import * as argon from "argon2";
 import { PrismaService } from "src/prisma/prisma.service";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { JsonWebTokenError, JwtService, TokenExpiredError } from "@nestjs/jwt";
@@ -12,6 +12,7 @@ import { DomainService } from "src/domain/domain.service";
 import { UserService } from "src/user/user.service";
 import { Response } from "express";
 import { COOKIE_OPTIONS } from "../reusable/"
+
 @Injectable()
 export class AuthService{
     constructor(private prisma: PrismaService, private jwt: JwtService, private config: ConfigService, private sendEmail: EmailService, private domain: DomainService, private userService: UserService ) {}
@@ -134,11 +135,12 @@ export class AuthService{
             if(!resetToken || resetToken.token !== token) throw new ForbiddenException("Invalid token");
 
             const hash = await argon.hash(dto.newPassword);
-            await this.prisma.user.update({ where: { id: payload.sub }, data: {
-                password: hash
-            } });
-
-            await this.prisma.forgotPasswordToken.delete({ where: { userId: payload.sub } });
+            await this.prisma.$transaction([
+                this.prisma.user.update({ where: { id: payload.sub }, data: {
+                    password: hash
+                } }),
+                this.prisma.forgotPasswordToken.delete({ where: { userId: payload.sub } })
+            ])
             return { message: "Password changed successfully" }
         } catch (error) {
             if(error instanceof JsonWebTokenError || error instanceof TokenExpiredError) {

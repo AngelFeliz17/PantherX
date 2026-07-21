@@ -15,14 +15,10 @@ export class ListingService {
         const category = await this.prisma.category.findUnique({ where: { id: dto.categoryId } });
         if (!category) throw new NotFoundException('Category not found');
 
-       const uploadedImages: CloudinaryUploadResult[] = []; 
-       try {
-            for(const file of files){ 
-                const result = await this.cloudinaryService.uploadListingImg(file) as CloudinaryUploadResult;
-                uploadedImages.push(result)
-            };
-
-            const data = await this.prisma.listing.create({ data: { ...dto,  sellerId: seller.id, images: { create: uploadedImages.map((img, idx) => ({
+        let images;
+        try {
+            images = await this.uploadImages(files);
+            const data = await this.prisma.listing.create({ data: { ...dto,  sellerId: seller.id, images: { create: images.map((img, idx) => ({
                 url: img.secure_url,
                 order: idx,
                 publicId: img.public_id
@@ -30,11 +26,21 @@ export class ListingService {
             return { message: "Listing created successfully", data }
        } catch(error) {
             await Promise.all(
-                uploadedImages.map(img => this.cloudinaryService.deleteImage(img.public_id))
+                images.map(img => this.cloudinaryService.deleteImage(img.public_id))
             )
             console.log(error)
             throw error;
        }
+    }
+
+    private async uploadImages(files: Express.Multer.File[]) {
+       const uploadedImages: CloudinaryUploadResult[] = []; 
+        for(const file of files){ 
+            const result = await this.cloudinaryService.uploadListingImg(file) as CloudinaryUploadResult;
+            uploadedImages.push(result)
+        };
+
+        return uploadedImages;
     }
 
     async findMy(user: User) {
@@ -54,10 +60,23 @@ export class ListingService {
         return listing;
     }
 
-    async update(id: string, dto: UpdateListingDto) {
+    async update(id: string, dto: UpdateListingDto, files: Express.Multer.File[]) {
         const listing = await this.prisma.listing.findFirst({ where: { id, deletedAt: null } });
         if(!listing) throw new NotFoundException("Listing not found")
-        return await this.prisma.listing.update({ where: { id }, data: dto });
+        let images;
+        try {
+            if(files) {
+                images = await this.uploadImages(files);
+            }
+            return await this.prisma.listing.update({ where: { id }, data: { ...dto, images: { create: images.map((img, idx) => ({
+                url: img.secure_url,
+                order: idx,
+                publicId: img.public_id
+            })) } } });
+        } catch(error) {
+            console.error(error);
+            throw error;
+        }
     }
 
     async removeImage(id: string) {

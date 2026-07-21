@@ -36,8 +36,9 @@ export class ListingController {
 
     @UseGuards(JwtGuard)
     @Patch(':id')
-    update(@Param('id') id: string, @Body() dto: UpdateListingDto) {
-        return this.listingService.update(id, dto);
+    @UseInterceptors(FilesInterceptor('images', 10))
+    update(@Param('id') id: string, @Body() dto: UpdateListingDto, @UploadedFiles() files: Express.Multer.File[]) {
+        return this.listingService.update(id, dto, files);
     }
 
     @UseGuards(JwtGuard)
